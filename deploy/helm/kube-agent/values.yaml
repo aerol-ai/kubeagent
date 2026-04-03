@@ -1,15 +1,20 @@
 # Agent image
 image:
   repository: ghcr.io/penify-dev/kube-agent
-  tag: "0.1.0"
-  pullPolicy: IfNotPresent
+  tag: "latest"
+  pullPolicy: Always
 
 # Number of agent replicas (typically 1)
 replicaCount: 1
 
 # Platform connection
+# The agent connects DIRECTLY to the Agent Gateway container (port 8080).
+# No reverse proxy or Next.js in the path.
+# Format: wss://<gateway-host-or-ip>:<gateway-port>/
+# Example (K8s service): wss://agent-gateway.default.svc.cluster.local:8080/
+# Example (public host):  wss://gateway.aerol.ai:8080/
 platform:
-  url: "wss://app.aerol.ai/api/agent/connect"
+  url: "wss://ws.aerol.ai/"
   # Set via --set or secret
   token: ""
 
@@ -25,11 +30,6 @@ reconnectInterval: 5
 maxReconnectInterval: 300
 heartbeatInterval: 30
 
-# Use an existing secret for the agent token/url
-existingSecret: ""
-existingSecretKey: "agent-token"
-existingSecretUrlKey: "platform-url"
-
 # ServiceAccount
 serviceAccount:
   create: true
@@ -41,6 +41,10 @@ rbac:
   create: true
   # Set to "ClusterRole" for cluster-wide access, "Role" for namespace-scoped
   scope: "ClusterRole"
+  # Only used when scope is "Role". List of namespaces the agent should have access to.
+  # If empty, defaults to the release namespace (--namespace value).
+  # Example: ["production", "staging", "dev"]
+  namespaces: []
 
 # Resources
 resources:

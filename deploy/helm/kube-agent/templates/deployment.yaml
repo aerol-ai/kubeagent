@@ -32,23 +32,13 @@ spec:
             - name: PLATFORM_URL
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.existingSecret }}
-                  name: {{ .Values.existingSecret }}
-                  key: {{ .Values.existingSecretUrlKey | default "platform-url" }}
-                  {{- else }}
                   name: {{ include "kube-agent.fullname" . }}
                   key: platform-url
-                  {{- end }}
             - name: AGENT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.existingSecret }}
-                  name: {{ .Values.existingSecret }}
-                  key: {{ .Values.existingSecretKey }}
-                  {{- else }}
                   name: {{ include "kube-agent.fullname" . }}
                   key: agent-token
-                  {{- end }}
             - name: IN_CLUSTER
               value: "true"
             - name: AGENT_ID

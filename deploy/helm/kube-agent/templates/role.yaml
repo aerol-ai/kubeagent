@@ -1,0 +1,35 @@
+{{- if and .Values.rbac.create (eq .Values.rbac.scope "Role") }}
+{{- $namespaces := default (list .Release.Namespace) .Values.rbac.namespaces }}
+{{- range $ns := $namespaces }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kube-agent.fullname" $ }}
+  namespace: {{ $ns }}
+  labels:
+    {{- include "kube-agent.labels" $ | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "secrets", "endpoints", "persistentvolumeclaims", "events"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "networkpolicies"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec", "pods/log", "pods/attach"]
+    verbs: ["create", "get"]
+{{- end }}
+{{- end }}
