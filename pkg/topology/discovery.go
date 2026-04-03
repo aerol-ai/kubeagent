@@ -154,6 +154,12 @@ func (b *Builder) addDeployments(ctx context.Context, namespace string, graph *T
 			Name:      dep.Name,
 			Namespace: dep.Namespace,
 			Labels:    dep.Labels,
+			Details: map[string]interface{}{
+				"replicas":          dep.Status.Replicas,
+				"readyReplicas":     dep.Status.ReadyReplicas,
+				"availableReplicas": dep.Status.AvailableReplicas,
+				"updatedReplicas":   dep.Status.UpdatedReplicas,
+			},
 		})
 		// Connect to pods via label selector
 		for _, node := range graph.Nodes {
@@ -251,6 +257,10 @@ func (b *Builder) addStatefulSets(ctx context.Context, namespace string, graph *
 			Name:      s.Name,
 			Namespace: s.Namespace,
 			Labels:    s.Labels,
+			Details: map[string]interface{}{
+				"replicas":      s.Status.Replicas,
+				"readyReplicas": s.Status.ReadyReplicas,
+			},
 		})
 		for _, node := range graph.Nodes {
 			if node.Kind == "Pod" && node.Namespace == s.Namespace {
@@ -280,6 +290,11 @@ func (b *Builder) addDaemonSets(ctx context.Context, namespace string, graph *To
 			Name:      ds.Name,
 			Namespace: ds.Namespace,
 			Labels:    ds.Labels,
+			Details: map[string]interface{}{
+				"desiredNumberScheduled": ds.Status.DesiredNumberScheduled,
+				"numberReady":           ds.Status.NumberReady,
+				"numberAvailable":       ds.Status.NumberAvailable,
+			},
 		})
 		for _, node := range graph.Nodes {
 			if node.Kind == "Pod" && node.Namespace == ds.Namespace {
