@@ -76,3 +76,8 @@ securityContext:
   capabilities:
     drop:
       - ALL
+
+# Auto-upgrade feature based on proxy/gateway chart version
+autoUpgrade:
+  enabled: true
+  repository: "ghcr.io/aerol-ai/kubeagent"

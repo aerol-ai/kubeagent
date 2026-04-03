@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/aerol-ai/kubeagent/pkg/config"
+	"github.com/aerol-ai/kubeagent/pkg/upgrade"
 	"github.com/gorilla/websocket"
 )
 
@@ -147,7 +148,19 @@ func (c *Client) readPump() {
 			log.Println("Failed to parse command")
 			continue
 		}
-		go c.handler(cmd)
+
+		if cmd.Type == "ping" {
+			c.SendJSON(map[string]string{"type": "pong"})
+			if cmd.Version != "" && c.cfg.AutoUpgradeEnabled && cmd.Version != c.cfg.HelmChartVersion {
+				log.Printf("Version mismatch detected. Gateway: %s, Agent: %s. Triggering automatic upgrade.", cmd.Version, c.cfg.HelmChartVersion)
+				go upgrade.Perform(c.cfg, cmd.Version)
+			}
+			continue
+		}
+
+		if cmd.RequestID != "" {
+			go c.handler(cmd)
+		}
 	}
 }
 

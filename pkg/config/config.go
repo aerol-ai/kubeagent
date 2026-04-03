@@ -19,6 +19,11 @@ type Config struct {
 	KubeConfigPath       string
 	AgentID              string
 	LogLevel             string
+	AutoUpgradeEnabled   bool
+	HelmChartVersion     string
+	AgentImageRepo       string
+	PodNamespace         string
+	DeploymentName       string
 }
 
 // LoadFromEnv reads configuration from environment variables.
@@ -34,6 +39,11 @@ func LoadFromEnv() (*Config, error) {
 		KubeConfigPath:       getEnv("KUBECONFIG", ""),
 		AgentID:              getEnv("AGENT_ID", ""),
 		LogLevel:             getEnv("LOG_LEVEL", "info"),
+		AutoUpgradeEnabled:   getBoolEnv("AUTO_UPGRADE_ENABLED", false),
+		HelmChartVersion:     getEnv("HELM_CHART_VERSION", ""),
+		AgentImageRepo:       getEnv("AGENT_IMAGE_REPO", ""),
+		PodNamespace:         getEnv("POD_NAMESPACE", ""),
+		DeploymentName:       getEnv("DEPLOYMENT_NAME", ""),
 	}
 	if cfg.PlatformURL == "" {
 		return nil, fmt.Errorf("PLATFORM_URL is required")

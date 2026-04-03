@@ -4,9 +4,11 @@ import "encoding/json"
 
 // Command represents an incoming command from the platform.
 type Command struct {
-	RequestID string          `json:"request_id"`
-	Tool      string          `json:"tool"`
-	Input     json.RawMessage `json:"input"`
+	Type      string          `json:"type,omitempty"`
+	Version   string          `json:"version,omitempty"`
+	RequestID string          `json:"request_id,omitempty"`
+	Tool      string          `json:"tool,omitempty"`
+	Input     json.RawMessage `json:"input,omitempty"`
 }
 
 // Result represents the result of a command execution.

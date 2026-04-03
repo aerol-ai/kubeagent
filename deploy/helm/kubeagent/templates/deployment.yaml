@@ -53,6 +53,22 @@ spec:
               value: {{ .Values.maxReconnectInterval | quote }}
             - name: HEARTBEAT_INTERVAL
               value: {{ .Values.heartbeatInterval | quote }}
+            {{- if .Values.autoUpgrade }}
+            {{- if .Values.autoUpgrade.enabled }}
+            - name: AUTO_UPGRADE_ENABLED
+              value: "true"
+            - name: HELM_CHART_VERSION
+              value: {{ .Chart.Version | quote }}
+            - name: AGENT_IMAGE_REPO
+              value: {{ .Values.autoUpgrade.repository | quote }}
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: DEPLOYMENT_NAME
+              value: {{ include "kubeagent.fullname" . | quote }}
+            {{- end }}
+            {{- end }}
           ports:
             - name: health
               containerPort: 8081
