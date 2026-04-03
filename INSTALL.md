@@ -24,7 +24,7 @@ The Aerol.ai agent is a lightweight Go binary that runs inside your Kubernetes c
 
 ```bash
 # Add the Aerol.ai Helm repository
-helm repo add vibedoctor oci://ghcr.io/penify-dev/kube-agent/charts
+helm repo add vibedoctor oci://ghcr.io/aerol-ai/kubeagent/charts
 
 # Install the agent
 helm install vibedoctor-agent vibedoctor/kube-agent \
@@ -226,5 +226,5 @@ helm template vibedoctor-agent vibedoctor/kube-agent \
 ## Support
 
 - Documentation: https://docs.vibedoctor.dev
-- Issues: https://github.com/penify-dev/kube-agent/issues
+- Issues: https://github.com/aerol-ai/kubeagent/issues
 - Community: https://discord.gg/vibedoctor

@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aerol-ai/kubeagent/pkg/config"
 	"github.com/gorilla/websocket"
-	"github.com/penify-dev/kube-agent/pkg/config"
 )
 
 const (
@@ -28,12 +28,12 @@ type ConnectionCallback func(connected bool)
 
 // Client manages a WebSocket connection to the platform.
 type Client struct {
-	cfg        *config.Config
-	conn       *websocket.Conn
-	mu         sync.Mutex
-	handler    MessageHandler
-	done       chan struct{}
-	onConnect  ConnectionCallback
+	cfg         *config.Config
+	conn        *websocket.Conn
+	mu          sync.Mutex
+	handler     MessageHandler
+	done        chan struct{}
+	onConnect   ConnectionCallback
 	agentStatus *config.AgentStatus
 }
 

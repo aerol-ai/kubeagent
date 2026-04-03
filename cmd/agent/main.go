@@ -9,11 +9,11 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/penify-dev/kube-agent/pkg/config"
-	"github.com/penify-dev/kube-agent/pkg/executor"
-	"github.com/penify-dev/kube-agent/pkg/health"
-	"github.com/penify-dev/kube-agent/pkg/k8s"
-	"github.com/penify-dev/kube-agent/pkg/ws"
+	"github.com/aerol-ai/kubeagent/pkg/config"
+	"github.com/aerol-ai/kubeagent/pkg/executor"
+	"github.com/aerol-ai/kubeagent/pkg/health"
+	"github.com/aerol-ai/kubeagent/pkg/k8s"
+	"github.com/aerol-ai/kubeagent/pkg/ws"
 )
 
 func main() {

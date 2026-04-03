@@ -1,6 +1,6 @@
 # Agent image
 image:
-  repository: ghcr.io/penify-dev/kube-agent
+  repository: ghcr.io/aerol-ai/kubeagent
   tag: "latest"
   pullPolicy: Always
 

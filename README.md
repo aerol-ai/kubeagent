@@ -39,7 +39,7 @@ The agent is best deployed using the provided Helm chart, which is available as 
 1. Install the agent directly from the OCI registry:
 
 ```bash
-helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
   --version 0.1.0 \
   --namespace aerol-system \
   --create-namespace \
@@ -106,7 +106,7 @@ This is the default. The agent gets a `ClusterRole` covering everything needed t
 
 ```bash
 # Default install - full cluster access
-helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN"
@@ -119,7 +119,7 @@ If your security policy does not allow cluster-wide access, set `rbac.scope=Role
 **Single namespace (defaults to the install namespace):**
 
 ```bash
-helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \
@@ -136,7 +136,7 @@ helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
 > ```
 
 ```bash
-helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \
@@ -161,7 +161,7 @@ rbac:
 Then pass the file with `-f`:
 
 ```bash
-helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \
@@ -171,7 +171,7 @@ helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
 To update the namespaces after install (e.g. add `qa`):
 
 ```bash
-helm upgrade kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+helm upgrade kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
   --namespace aerol-system \
   --set platform.token="YOUR_AGENT_TOKEN" \
   --set "rbac.namespaces={production,staging,dev,qa}" \
@@ -185,7 +185,7 @@ With `Role` scope, the agent has the same resource permissions (pods, deployment
 If you want full control over what the agent can access, disable RBAC creation entirely and bind the agent's ServiceAccount to your own Role or ClusterRole:
 
 ```bash
-helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \

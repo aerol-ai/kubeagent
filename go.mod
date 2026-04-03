@@ -1,4 +1,4 @@
-module github.com/penify-dev/kube-agent
+module github.com/aerol-ai/kubeagent
 
 go 1.24.5
 

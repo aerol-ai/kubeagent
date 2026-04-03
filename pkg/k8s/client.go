@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/penify-dev/kube-agent/pkg/config"
+	"github.com/aerol-ai/kubeagent/pkg/config"
 )
 
 // Clients bundles the Kubernetes API clients.

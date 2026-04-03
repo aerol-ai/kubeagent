@@ -11,7 +11,7 @@ COPY . .
 
 ARG VERSION=dev
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-    -ldflags="-s -w -X github.com/penify-dev/kube-agent/pkg/ws.Version=${VERSION}" \
+    -ldflags="-s -w -X github.com/aerol-ai/kubeagent/pkg/ws.Version=${VERSION}" \
     -o /kube-agent ./cmd/agent/
 
 # Runtime stage

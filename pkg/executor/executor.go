@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/penify-dev/kube-agent/pkg/config"
-	"github.com/penify-dev/kube-agent/pkg/k8s"
-	"github.com/penify-dev/kube-agent/pkg/tools"
-	"github.com/penify-dev/kube-agent/pkg/topology"
+	"github.com/aerol-ai/kubeagent/pkg/config"
+	"github.com/aerol-ai/kubeagent/pkg/k8s"
+	"github.com/aerol-ai/kubeagent/pkg/tools"
+	"github.com/aerol-ai/kubeagent/pkg/topology"
 )
 
 // Executor dispatches commands to the appropriate tool.
