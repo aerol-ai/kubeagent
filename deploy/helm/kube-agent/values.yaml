@@ -12,7 +12,7 @@ replicaCount: 1
 # No reverse proxy or Next.js in the path.
 # Format: wss://<gateway-host-or-ip>:<gateway-port>/
 # Example (K8s service): wss://agent-gateway.default.svc.cluster.local:8080/
-# Example (public host):  wss://gateway.aerol.ai:8080/
+# Example (public host):  wss://ws.aerol.ai/
 platform:
   url: "wss://ws.aerol.ai/"
   # Set via --set or secret
