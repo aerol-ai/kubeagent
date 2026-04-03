@@ -30,7 +30,15 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: PLATFORM_URL
-              value: {{ .Values.platform.url | quote }}
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.existingSecret }}
+                  name: {{ .Values.existingSecret }}
+                  key: {{ .Values.existingSecretUrlKey | default "platform-url" }}
+                  {{- else }}
+                  name: {{ include "kube-agent.fullname" . }}
+                  key: platform-url
+                  {{- end }}
             - name: AGENT_TOKEN
               valueFrom:
                 secretKeyRef:

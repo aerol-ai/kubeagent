@@ -9,7 +9,7 @@ replicaCount: 1
 
 # Platform connection
 platform:
-  url: "wss://app.aerol.ai/agent/connect"
+  url: "wss://app.aerol.ai/api/agent/connect"
   # Set via --set or secret
   token: ""
 
@@ -25,9 +25,10 @@ reconnectInterval: 5
 maxReconnectInterval: 300
 heartbeatInterval: 30
 
-# Use an existing secret for the agent token
+# Use an existing secret for the agent token/url
 existingSecret: ""
 existingSecretKey: "agent-token"
+existingSecretUrlKey: "platform-url"
 
 # ServiceAccount
 serviceAccount:

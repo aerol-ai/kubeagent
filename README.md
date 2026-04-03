@@ -69,8 +69,11 @@ Key configuration options in `values.yaml`:
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `platform.url` | Aerol.ai platform WebSocket URL | `wss://app.aerol.ai/agent/connect` |
+| `platform.url` | Aerol.ai platform WebSocket URL | `wss://app.aerol.ai/api/agent/connect` |
 | `platform.token` | Authentication token for the agent | `""` |
+| `existingSecret` | Use an existing secret for token and URL | `""` |
+| `existingSecretKey` | Key in `existingSecret` for the token | `agent-token` |
+| `existingSecretUrlKey` | Key in `existingSecret` for the URL | `platform-url` |
 | `replicaCount` | Number of agent replicas | `1` |
 | `image.repository` | Docker image repository | `ghcr.io/penify-dev/kube-agent` |
 | `image.tag` | Docker image tag | `0.1.0` |
