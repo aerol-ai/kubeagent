@@ -44,7 +44,7 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GHC_TOKEN }}
+        password: ${{ secrets.GCR_TOKEN }}
 
     - name: Build and push
       uses: docker/build-push-action@v5
@@ -78,7 +78,7 @@ jobs:
     - name: Login to GitHub Container Registry
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
-        echo ${{ secrets.GHC_TOKEN }} | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
+        echo ${{ secrets.GCR_TOKEN }} | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
 
     - name: Helm Package
       run: |
