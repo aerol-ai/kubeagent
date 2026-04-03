@@ -1,0 +1,73 @@
+# Agent image
+image:
+  repository: ghcr.io/penify-dev/kube-agent
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+# Number of agent replicas (typically 1)
+replicaCount: 1
+
+# Platform connection
+platform:
+  url: "wss://app.aerol.ai/agent/connect"
+  # Set via --set or secret
+  token: ""
+
+# Agent ID (auto-generated if empty)
+agentId: ""
+
+# Logging
+logLevel: "info"
+
+# Timeouts (seconds)
+commandTimeout: 60
+reconnectInterval: 5
+maxReconnectInterval: 300
+heartbeatInterval: 30
+
+# Use an existing secret for the agent token
+existingSecret: ""
+existingSecretKey: "agent-token"
+
+# ServiceAccount
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# RBAC - full cluster access by default
+rbac:
+  create: true
+  # Set to "ClusterRole" for cluster-wide access, "Role" for namespace-scoped
+  scope: "ClusterRole"
+
+# Resources
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# Node selection
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  fsGroup: 65534
+
+# Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL

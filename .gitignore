@@ -1,0 +1,48 @@
+# Binaries
+agent
+*.exe
+*.test
+*.prof
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build scripts
+rewrite.py
+
+# Go
+vendor/
+bin/
+*.out
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env/
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.mo
+*.pot
+*.log
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+.pylint.d/
+
+# Docker
+.dockerignore
