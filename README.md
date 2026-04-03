@@ -32,11 +32,29 @@ go build -o kube-agent ./cmd/agent/
 
 ## Helm Deployment
 
-The agent is best deployed using the provided Helm chart.
+The agent is best deployed using the provided Helm chart, which is available as an OCI artifact in the GitHub Container Registry.
 
-### Installation
+### Installation via OCI (Recommended)
 
-1. Install the agent using the local chart:
+1. Authenticate with GHCR (if the chart is private):
+
+```bash
+echo $GITHUB_TOKEN | helm registry login ghcr.io --username YOUR_USERNAME --password-stdin
+```
+
+2. Install the agent directly from the OCI registry:
+
+```bash
+helm install kube-agent oci://ghcr.io/penify-dev/charts/kube-agent \
+  --version 0.1.0 \
+  --namespace aerol-system \
+  --create-namespace \
+  --set platform.token="YOUR_AGENT_TOKEN"
+```
+
+### Installation from Source
+
+If you have the repository cloned locally, you can install using the local chart folder:
 
 ```bash
 helm install kube-agent ./deploy/helm/kube-agent \
