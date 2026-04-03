@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kube-agent.fullname" . }}
+  name: {{ include "kubeagent.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "kube-agent.labels" . | nindent 4 }}
+    {{- include "kubeagent.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "kube-agent.selectorLabels" . | nindent 6 }}
+      {{- include "kubeagent.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "kube-agent.selectorLabels" . | nindent 8 }}
+        {{- include "kubeagent.selectorLabels" . | nindent 8 }}
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccountName: {{ include "kube-agent.serviceAccountName" . }}
+      serviceAccountName: {{ include "kubeagent.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -32,12 +32,12 @@ spec:
             - name: PLATFORM_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "kube-agent.fullname" . }}
+                  name: {{ include "kubeagent.fullname" . }}
                   key: platform-url
             - name: AGENT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "kube-agent.fullname" . }}
+                  name: {{ include "kubeagent.fullname" . }}
                   key: agent-token
             - name: IN_CLUSTER
               value: "true"

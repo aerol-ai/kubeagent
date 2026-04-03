@@ -72,7 +72,7 @@ func (a *ApplyTools) Apply(ctx context.Context, manifest string, namespace strin
 		}
 
 		applied, err := res.Apply(ctx, obj.GetName(), &obj, metav1.ApplyOptions{
-			FieldManager: "kube-agent",
+			FieldManager: "kubeagent",
 			Force:        true,
 		})
 		if err != nil {

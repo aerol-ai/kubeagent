@@ -5,10 +5,10 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "kube-agent.fullname" $ }}
+  name: {{ include "kubeagent.fullname" $ }}
   namespace: {{ $ns }}
   labels:
-    {{- include "kube-agent.labels" $ | nindent 4 }}
+    {{- include "kubeagent.labels" $ | nindent 4 }}
 rules:
   - apiGroups: [""]
     resources: ["pods", "services", "configmaps", "secrets", "endpoints", "persistentvolumeclaims", "events"]

@@ -86,7 +86,7 @@ func main() {
 		os.Exit(0)
 	}()
 
-	log.Println("Starting kube-agent...")
+	log.Println("Starting kubeagent...")
 	if err := wsClient.ConnectWithRetry(); err != nil {
 		log.Fatalf("WebSocket connection failed: %v", err)
 	}

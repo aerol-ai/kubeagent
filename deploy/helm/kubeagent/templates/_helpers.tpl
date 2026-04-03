@@ -1,14 +1,14 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "kube-agent.name" -}}
+{{- define "kubeagent.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
 */}}
-{{- define "kube-agent.fullname" -}}
+{{- define "kubeagent.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -24,9 +24,9 @@ Create a default fully qualified app name.
 {{/*
 Common labels
 */}}
-{{- define "kube-agent.labels" -}}
+{{- define "kubeagent.labels" -}}
 helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-app.kubernetes.io/name: {{ include "kube-agent.name" . }}
+app.kubernetes.io/name: {{ include "kubeagent.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -35,18 +35,18 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "kube-agent.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "kube-agent.name" . }}
+{{- define "kubeagent.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "kubeagent.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Service account name
 */}}
-{{- define "kube-agent.serviceAccountName" -}}
+{{- define "kubeagent.serviceAccountName" -}}
 {{- if .Values.serviceAccount.name }}
 {{- .Values.serviceAccount.name }}
 {{- else }}
-{{- include "kube-agent.fullname" . }}
+{{- include "kubeagent.fullname" . }}
 {{- end }}
 {{- end }}

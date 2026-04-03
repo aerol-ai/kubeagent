@@ -1,5 +1,5 @@
 apiVersion: v2
-name: kube-agent
+name: kubeagent
 description: Aerol.ai Kubernetes Agent - connects to the platform via WebSocket
 type: application
 version: 0.1.0

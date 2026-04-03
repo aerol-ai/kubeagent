@@ -2,9 +2,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "kube-agent.fullname" . }}
+  name: {{ include "kubeagent.fullname" . }}
   labels:
-    {{- include "kube-agent.labels" . | nindent 4 }}
+    {{- include "kubeagent.labels" . | nindent 4 }}
 rules:
   # Core resources: pods, services, configmaps, secrets, PVCs, events, namespaces, serviceaccounts
   - apiGroups: [""]

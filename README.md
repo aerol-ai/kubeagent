@@ -21,13 +21,13 @@ The Aerol.ai Kubernetes Agent is a robust, asynchronous orchestration engine des
 ### Build from source
 
 ```bash
-go build -o kube-agent ./cmd/agent/
+go build -o kubeagent ./cmd/agent/
 ```
 
 ### Run locally
 
 ```bash
-./kube-agent --config config.yaml
+./kubeagent --config config.yaml
 ```
 
 ## Helm Deployment
@@ -39,7 +39,7 @@ The agent is best deployed using the provided Helm chart, which is available as 
 1. Install the agent directly from the OCI registry:
 
 ```bash
-helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
+helm install kubeagent oci://ghcr.io/aerol-ai/charts/kubeagent \
   --version 0.1.0 \
   --namespace aerol-system \
   --create-namespace \
@@ -51,7 +51,7 @@ helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
 If you have the repository cloned locally, you can install using the local chart folder:
 
 ```bash
-helm install kube-agent ./deploy/helm/kube-agent \
+helm install kubeagent ./deploy/helm/kubeagent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN"
@@ -106,7 +106,7 @@ This is the default. The agent gets a `ClusterRole` covering everything needed t
 
 ```bash
 # Default install - full cluster access
-helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
+helm install kubeagent oci://ghcr.io/aerol-ai/charts/kubeagent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN"
@@ -119,7 +119,7 @@ If your security policy does not allow cluster-wide access, set `rbac.scope=Role
 **Single namespace (defaults to the install namespace):**
 
 ```bash
-helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
+helm install kubeagent oci://ghcr.io/aerol-ai/charts/kubeagent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \
@@ -136,7 +136,7 @@ helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
 > ```
 
 ```bash
-helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
+helm install kubeagent oci://ghcr.io/aerol-ai/charts/kubeagent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \
@@ -161,7 +161,7 @@ rbac:
 Then pass the file with `-f`:
 
 ```bash
-helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
+helm install kubeagent oci://ghcr.io/aerol-ai/charts/kubeagent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \
@@ -171,7 +171,7 @@ helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
 To update the namespaces after install (e.g. add `qa`):
 
 ```bash
-helm upgrade kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
+helm upgrade kubeagent oci://ghcr.io/aerol-ai/charts/kubeagent \
   --namespace aerol-system \
   --set platform.token="YOUR_AGENT_TOKEN" \
   --set "rbac.namespaces={production,staging,dev,qa}" \
@@ -185,7 +185,7 @@ With `Role` scope, the agent has the same resource permissions (pods, deployment
 If you want full control over what the agent can access, disable RBAC creation entirely and bind the agent's ServiceAccount to your own Role or ClusterRole:
 
 ```bash
-helm install kube-agent oci://ghcr.io/aerol-ai/charts/kube-agent \
+helm install kubeagent oci://ghcr.io/aerol-ai/charts/kubeagent \
   --namespace aerol-system \
   --create-namespace \
   --set platform.token="YOUR_AGENT_TOKEN" \
@@ -199,7 +199,7 @@ Then create your own RBAC rules. For example, a minimal read-only ClusterRole:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kube-agent-readonly
+  name: kubeagent-readonly
 rules:
   - apiGroups: [""]
     resources: ["pods", "services", "configmaps", "events", "namespaces"]
@@ -211,11 +211,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kube-agent-readonly
+  name: kubeagent-readonly
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kube-agent-readonly
+  name: kubeagent-readonly
 subjects:
   - kind: ServiceAccount
     name: my-custom-sa
@@ -229,7 +229,7 @@ subjects:
 To uninstall the agent:
 
 ```bash
-helm uninstall kube-agent --namespace aerol-system
+helm uninstall kubeagent --namespace aerol-system
 ```
 
 ## CI/CD
