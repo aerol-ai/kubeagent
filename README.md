@@ -69,12 +69,12 @@ Key configuration options in `values.yaml`:
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `platform.url` | Aerol.ai platform WebSocket URL | `wss://app.aerol.ai/api/agent/connect` |
-| `platform.token` | Authentication token for the agent | `""` |
-| `existingSecret` | Use an existing secret for token and URL | `""` |
-| `existingSecretKey` | Key in `existingSecret` for the token | `agent-token` |
-| `existingSecretUrlKey` | Key in `existingSecret` for the URL | `platform-url` |
-| `replicaCount` | Number of agent replicas | `1` |
+| `platform.url` | Aerol.ai platform WebSocket URL. This is the default; you can override it via `--set platform.url=...` or by providing it in a secret (see below). | `wss://app.aerol.ai/api/agent/connect` |
+| `platform.token` | Authentication token for the agent. Must be provided for the agent to connect. | `""` |
+| `existingSecret` | Use an existing Kubernetes secret to store sensitive information like the `token` and `url`. | `""` |
+| `existingSecretKey` | The key within the `existingSecret` that contains the agent token. | `agent-token` |
+| `existingSecretUrlKey` | The key within the `existingSecret` that contains the platform URL. | `platform-url` |
+| `replicaCount` | The number of agent instances to run. Typically set to `1`. | `1` |
 | `image.repository` | Docker image repository | `ghcr.io/penify-dev/kube-agent` |
 | `image.tag` | Docker image tag | `0.1.0` |
 | `logLevel` | Logging level (`debug`, `info`, `warn`, `error`) | `info` |
