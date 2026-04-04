@@ -91,10 +91,16 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

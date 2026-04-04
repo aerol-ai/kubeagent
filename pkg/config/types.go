@@ -61,6 +61,7 @@ type ScaleInput struct {
 
 type ApplyInput struct {
 	Manifest  string `json:"manifest"`
+	YAML      string `json:"yaml"`
 	Namespace string `json:"namespace"`
 }
 
@@ -82,5 +83,22 @@ type TopologyInput struct {
 }
 
 type TrafficInput struct {
+	Namespace string `json:"namespace"`
+}
+
+type HelmUpsertInput struct {
+	ReleaseName     string `json:"releaseName"`
+	Namespace       string `json:"namespace"`
+	Chart           string `json:"chart"`
+	RepoURL         string `json:"repoUrl"`
+	RepoName        string `json:"repoName"`
+	Version         string `json:"version"`
+	ValuesYAML      string `json:"valuesYaml"`
+	Upgrade         bool   `json:"upgrade"`
+	CreateNamespace bool   `json:"createNamespace"`
+	TimeoutSeconds  int    `json:"timeoutSeconds"`
+}
+
+type HelmListInput struct {
 	Namespace string `json:"namespace"`
 }

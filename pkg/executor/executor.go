@@ -19,6 +19,7 @@ type Executor struct {
 	services    *tools.ServiceTools
 	cluster     *tools.ClusterTools
 	apply       *tools.ApplyTools
+	helm        *tools.HelmTools
 	topology    *topology.Builder
 	traffic     *topology.TrafficMapper
 	timeout     time.Duration
@@ -32,6 +33,7 @@ func NewExecutor(clients *k8s.Clients, cfg *config.Config) *Executor {
 		services:    tools.NewServiceTools(clients.Clientset),
 		cluster:     tools.NewClusterTools(clients.Clientset),
 		apply:       tools.NewApplyTools(clients.Clientset, clients.DynamicClient, clients.RestConfig),
+		helm:        tools.NewHelmTools(clients.RestConfig),
 		topology:    topology.NewBuilder(clients.Clientset),
 		traffic:     topology.NewTrafficMapper(clients.Clientset),
 		timeout:     cfg.CommandTimeout,
@@ -40,7 +42,12 @@ func NewExecutor(clients *k8s.Clients, cfg *config.Config) *Executor {
 
 // Execute runs a command and returns the result.
 func (e *Executor) Execute(cmd config.Command) config.Result {
-	ctx, cancel := context.WithTimeout(context.Background(), e.timeout)
+	timeout := e.timeout
+	if cmd.Tool == "helm_release_upsert" {
+		timeout = time.Duration(tools.ParseHelmTimeoutSeconds(cmd.Input, int(e.timeout.Seconds())+300)) * time.Second
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	data, err := e.dispatch(ctx, cmd.Tool, cmd.Input)
@@ -218,7 +225,11 @@ func (e *Executor) dispatch(ctx context.Context, tool string, input json.RawMess
 		if err := json.Unmarshal(input, &in); err != nil {
 			return nil, err
 		}
-		return e.apply.Apply(ctx, in.Manifest, in.Namespace)
+		manifest := in.Manifest
+		if manifest == "" {
+			manifest = in.YAML
+		}
+		return e.apply.Apply(ctx, manifest, in.Namespace)
 	case "delete":
 		var in config.DeleteInput
 		if err := json.Unmarshal(input, &in); err != nil {
@@ -231,6 +242,18 @@ func (e *Executor) dispatch(ctx context.Context, tool string, input json.RawMess
 			return nil, err
 		}
 		return e.apply.ExecInPod(ctx, in.Namespace, in.Pod, in.Container, in.Command)
+	case "helm_release_upsert":
+		var in config.HelmUpsertInput
+		if err := json.Unmarshal(input, &in); err != nil {
+			return nil, err
+		}
+		return e.helm.UpsertRelease(ctx, in)
+	case "helm_list":
+		var in config.HelmListInput
+		if err := json.Unmarshal(input, &in); err != nil {
+			return nil, err
+		}
+		return e.helm.ListReleases(ctx, in.Namespace)
 
 	// --- Topology ---
 	case "topology":
@@ -289,6 +312,8 @@ func (e *Executor) ListTools() []ToolInfo {
 		{Name: "apply", Description: "Apply YAML manifests"},
 		{Name: "delete", Description: "Delete a resource"},
 		{Name: "exec", Description: "Execute command in a pod"},
+		{Name: "helm_release_upsert", Description: "Install or upgrade a Helm release"},
+		{Name: "helm_list", Description: "List Helm releases"},
 		{Name: "topology", Description: "Build network topology graph"},
 		{Name: "traffic_routes", Description: "Map traffic routes"},
 	}
