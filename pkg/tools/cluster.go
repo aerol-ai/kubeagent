@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -90,12 +91,37 @@ var protectedNamespaces = map[string]bool{
 	"default":         true,
 }
 
-// DeleteNamespace deletes a namespace. Protected system namespaces are rejected.
+// DeleteNamespace deletes a namespace and waits (up to the context deadline)
+// for the API server to finish cascading the deletion. Protected system
+// namespaces are rejected.
 func (c *ClusterTools) DeleteNamespace(ctx context.Context, name string) error {
 	if protectedNamespaces[name] {
 		return fmt.Errorf("cannot delete protected namespace %q", name)
 	}
-	return c.client.CoreV1().Namespaces().Delete(ctx, name, metav1.DeleteOptions{})
+	if err := c.client.CoreV1().Namespaces().Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
+		return err
+	}
+
+	// Poll until the namespace is gone (or the context expires). This matches
+	// the UX of `helm uninstall --wait` and prevents the caller from seeing a
+	// "deleted" success while cascade finalizers are still running.
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-ticker.C:
+			_, err := c.client.CoreV1().Namespaces().Get(ctx, name, metav1.GetOptions{})
+			if err != nil {
+				// IsNotFound means the namespace is fully deleted — success.
+				if strings.Contains(err.Error(), "not found") {
+					return nil
+				}
+				return err
+			}
+		}
+	}
 }
 
 // ListNodes lists all nodes.

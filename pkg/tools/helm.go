@@ -112,6 +112,39 @@ func (h *HelmTools) UpsertRelease(ctx context.Context, input config.HelmUpsertIn
 	return result, nil
 }
 
+// UninstallRelease removes a Helm release and (by default) deletes its history.
+// Pass KeepHistory=true to leave the release history in place (equivalent to
+// `helm uninstall --keep-history`).
+func (h *HelmTools) UninstallRelease(ctx context.Context, input config.HelmUninstallInput) (*HelmUpsertResult, error) {
+	env, _, cleanup, err := h.prepareHelmEnvironment(input.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	defer cleanup()
+
+	timeoutSeconds := input.TimeoutSeconds
+	if timeoutSeconds <= 0 {
+		timeoutSeconds = 300
+	}
+
+	args := []string{"uninstall", input.ReleaseName, "--namespace", input.Namespace, "--wait", "--timeout", fmt.Sprintf("%ds", timeoutSeconds)}
+	if input.KeepHistory {
+		args = append(args, "--keep-history")
+	}
+
+	output, err := runHelm(ctx, env, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &HelmUpsertResult{
+		ReleaseName: input.ReleaseName,
+		Namespace:   input.Namespace,
+		Status:      "uninstalled",
+		Output:      output,
+	}, nil
+}
+
 func (h *HelmTools) ListReleases(ctx context.Context, namespace string) ([]map[string]any, error) {
 	env, _, cleanup, err := h.prepareHelmEnvironment(namespace)
 	if err != nil {

@@ -102,3 +102,10 @@ type HelmUpsertInput struct {
 type HelmListInput struct {
 	Namespace string `json:"namespace"`
 }
+
+type HelmUninstallInput struct {
+	ReleaseName    string `json:"releaseName"`
+	Namespace      string `json:"namespace"`
+	KeepHistory    bool   `json:"keepHistory"`
+	TimeoutSeconds int    `json:"timeoutSeconds"`
+}

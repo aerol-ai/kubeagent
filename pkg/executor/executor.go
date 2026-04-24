@@ -43,7 +43,7 @@ func NewExecutor(clients *k8s.Clients, cfg *config.Config) *Executor {
 // Execute runs a command and returns the result.
 func (e *Executor) Execute(cmd config.Command) config.Result {
 	timeout := e.timeout
-	if cmd.Tool == "helm_release_upsert" {
+	if cmd.Tool == "helm_release_upsert" || cmd.Tool == "helm_release_uninstall" {
 		timeout = time.Duration(tools.ParseHelmTimeoutSeconds(cmd.Input, int(e.timeout.Seconds())+300)) * time.Second
 	}
 
@@ -248,6 +248,12 @@ func (e *Executor) dispatch(ctx context.Context, tool string, input json.RawMess
 			return nil, err
 		}
 		return e.helm.UpsertRelease(ctx, in)
+	case "helm_release_uninstall":
+		var in config.HelmUninstallInput
+		if err := json.Unmarshal(input, &in); err != nil {
+			return nil, err
+		}
+		return e.helm.UninstallRelease(ctx, in)
 	case "helm_list":
 		var in config.HelmListInput
 		if err := json.Unmarshal(input, &in); err != nil {
@@ -313,6 +319,7 @@ func (e *Executor) ListTools() []ToolInfo {
 		{Name: "delete", Description: "Delete a resource"},
 		{Name: "exec", Description: "Execute command in a pod"},
 		{Name: "helm_release_upsert", Description: "Install or upgrade a Helm release"},
+		{Name: "helm_release_uninstall", Description: "Uninstall a Helm release (cascades all resources it manages)"},
 		{Name: "helm_list", Description: "List Helm releases"},
 		{Name: "topology", Description: "Build network topology graph"},
 		{Name: "traffic_routes", Description: "Map traffic routes"},
