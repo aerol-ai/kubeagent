@@ -20,6 +20,7 @@ type Config struct {
 	AgentID              string
 	LogLevel             string
 	AutoUpgradeEnabled   bool
+	AutoUpgradeInterval  time.Duration
 	HelmChartVersion     string
 	AgentImageRepo       string
 	PodNamespace         string
@@ -40,6 +41,7 @@ func LoadFromEnv() (*Config, error) {
 		AgentID:              getEnv("AGENT_ID", ""),
 		LogLevel:             getEnv("LOG_LEVEL", "info"),
 		AutoUpgradeEnabled:   getBoolEnv("AUTO_UPGRADE_ENABLED", false),
+		AutoUpgradeInterval:  getDurationEnv("AUTO_UPGRADE_INTERVAL", 60*time.Second),
 		HelmChartVersion:     getEnv("HELM_CHART_VERSION", ""),
 		AgentImageRepo:       getEnv("AGENT_IMAGE_REPO", ""),
 		PodNamespace:         getEnv("POD_NAMESPACE", ""),

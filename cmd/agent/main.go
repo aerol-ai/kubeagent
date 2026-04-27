@@ -13,6 +13,7 @@ import (
 	"github.com/aerol-ai/kubeagent/pkg/executor"
 	"github.com/aerol-ai/kubeagent/pkg/health"
 	"github.com/aerol-ai/kubeagent/pkg/k8s"
+	"github.com/aerol-ai/kubeagent/pkg/upgrade"
 	"github.com/aerol-ai/kubeagent/pkg/ws"
 )
 
@@ -63,6 +64,10 @@ func main() {
 			log.Printf("Health server error: %v", err)
 		}
 	}()
+
+	if cfg.AutoUpgradeEnabled {
+		go upgrade.StartAutoUpdater(context.Background(), cfg, ws.Version)
+	}
 
 	var wsClient *ws.Client
 	wsClient = ws.NewClient(cfg, func(cmd config.Command) {

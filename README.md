@@ -69,6 +69,9 @@ Key configuration options in `values.yaml`:
 | `rbac.create` | Whether to create RBAC resources (see [RBAC Configuration](#rbac-configuration) below) | `true` |
 | `rbac.scope` | Scope of the RBAC role: `ClusterRole` (cluster-wide) or `Role` (namespace-only). See [RBAC Configuration](#rbac-configuration) | `ClusterRole` |
 | `rbac.namespaces` | Only used when `rbac.scope=Role`. List of namespaces the agent can access. Defaults to the install namespace if empty. | `[]` |
+| `autoUpgrade.enabled` | Enables automatic self-update checks inside the agent pod | `true` |
+| `autoUpgrade.repository` | OCI image repository checked for the newest agent release tag | `ghcr.io/aerol-ai/kubeagent` |
+| `autoUpgrade.intervalSeconds` | Poll interval, in seconds, for checking the remote registry for a newer release | `60` |
 
 > **Secrets are managed automatically.** When you install the chart, a Kubernetes Secret is created in the target namespace containing the `platform.token` and `platform.url`. You do not need to create or manage secrets manually. The namespace is either `aerol-system` (the recommended default) or whatever namespace you specify with `--namespace`.
 
@@ -223,6 +226,12 @@ subjects:
 ```
 
 > **Tip for DevOps teams:** Start with `rbac.scope=Role` for the most restrictive default. If the agent needs to discover resources across namespaces, switch to `ClusterRole`. If you need fine-grained control (e.g., read-only in some namespaces, read-write in others), use `rbac.create=false` and manage RBAC separately.
+
+### Automatic self-update
+
+When `autoUpgrade.enabled=true`, the agent now runs a background poller inside the pod. It compares the currently deployed agent image tag with the newest semver tag published in `autoUpgrade.repository`. If the remote registry has a newer release, the agent patches its own Deployment immediately so Kubernetes rolls out the new image.
+
+This is in addition to the existing platform-driven upgrade signal. The agent prefers the runtime build version for comparison and falls back to the chart version only when the binary version is not available.
 
 ### Uninstallation
 

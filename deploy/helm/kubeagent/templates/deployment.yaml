@@ -57,6 +57,8 @@ spec:
             {{- if .Values.autoUpgrade.enabled }}
             - name: AUTO_UPGRADE_ENABLED
               value: "true"
+            - name: AUTO_UPGRADE_INTERVAL
+              value: {{ .Values.autoUpgrade.intervalSeconds | quote }}
             - name: HELM_CHART_VERSION
               value: {{ .Chart.Version | quote }}
             - name: AGENT_IMAGE_REPO

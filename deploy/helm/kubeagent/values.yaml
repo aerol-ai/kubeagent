@@ -77,7 +77,8 @@ securityContext:
     drop:
       - ALL
 
-# Auto-upgrade feature based on proxy/gateway chart version
+# Auto-upgrade feature based on the latest semver tag in the remote image registry
 autoUpgrade:
   enabled: true
   repository: "ghcr.io/aerol-ai/kubeagent"
+  intervalSeconds: 60

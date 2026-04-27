@@ -10,7 +10,6 @@ import (
 	"github.com/aerol-ai/kubeagent/pkg/config"
 	"github.com/aerol-ai/kubeagent/pkg/upgrade"
 	"github.com/gorilla/websocket"
-	"golang.org/x/mod/semver"
 )
 
 const (
@@ -153,17 +152,13 @@ func (c *Client) readPump() {
 		if cmd.Type == "ping" {
 			c.SendJSON(map[string]string{"type": "pong"})
 			if cmd.Version != "" && c.cfg.AutoUpgradeEnabled {
-				gatewayVer := cmd.Version
-				if len(gatewayVer) > 0 && gatewayVer[0] != 'v' {
-					gatewayVer = "v" + gatewayVer
-				}
-				agentVer := c.cfg.HelmChartVersion
-				if len(agentVer) > 0 && agentVer[0] != 'v' {
-					agentVer = "v" + agentVer
+				agentVer := Version
+				if agentVer == "" || agentVer == "dev" {
+					agentVer = c.cfg.HelmChartVersion
 				}
 
-				if semver.Compare(gatewayVer, agentVer) > 0 {
-					log.Printf("Newer version detected. Gateway: %s, Agent: %s. Triggering automatic upgrade.", cmd.Version, c.cfg.HelmChartVersion)
+				if upgrade.IsNewerVersion(cmd.Version, agentVer) {
+					log.Printf("Newer version detected. Gateway: %s, Agent: %s. Triggering automatic upgrade.", cmd.Version, agentVer)
 					go upgrade.Perform(c.cfg, cmd.Version)
 				}
 			}
