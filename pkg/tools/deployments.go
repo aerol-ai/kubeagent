@@ -3,12 +3,17 @@ package tools
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
+
+	"github.com/aerol-ai/kubeagent/pkg/config"
 )
 
 // DeploymentTools provides deployment-related operations.
@@ -87,6 +92,99 @@ func (d *DeploymentTools) RestartDeployment(ctx context.Context, namespace, name
 // DeleteDeployment deletes a deployment.
 func (d *DeploymentTools) DeleteDeployment(ctx context.Context, namespace, name string) error {
 	return d.client.AppsV1().Deployments(namespace).Delete(ctx, name, metav1.DeleteOptions{})
+}
+
+// UpdateWorkloadResources updates CPU/memory requests and limits on a workload pod template container.
+func (d *DeploymentTools) UpdateWorkloadResources(ctx context.Context, input config.UpdateResourcesInput) error {
+	resources, err := buildResourceRequirements(input.Resources)
+	if err != nil {
+		return err
+	}
+
+	switch strings.ToLower(input.ResourceType) {
+	case "deployment", "deployments":
+		deployment, err := d.client.AppsV1().Deployments(input.Namespace).Get(ctx, input.Name, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+		if err := setContainerResources(deployment.Spec.Template.Spec.Containers, input.ContainerName, resources); err != nil {
+			return err
+		}
+		_, err = d.client.AppsV1().Deployments(input.Namespace).Update(ctx, deployment, metav1.UpdateOptions{})
+		return err
+	case "statefulset", "statefulsets":
+		statefulSet, err := d.client.AppsV1().StatefulSets(input.Namespace).Get(ctx, input.Name, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+		if err := setContainerResources(statefulSet.Spec.Template.Spec.Containers, input.ContainerName, resources); err != nil {
+			return err
+		}
+		_, err = d.client.AppsV1().StatefulSets(input.Namespace).Update(ctx, statefulSet, metav1.UpdateOptions{})
+		return err
+	case "daemonset", "daemonsets":
+		daemonSet, err := d.client.AppsV1().DaemonSets(input.Namespace).Get(ctx, input.Name, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+		if err := setContainerResources(daemonSet.Spec.Template.Spec.Containers, input.ContainerName, resources); err != nil {
+			return err
+		}
+		_, err = d.client.AppsV1().DaemonSets(input.Namespace).Update(ctx, daemonSet, metav1.UpdateOptions{})
+		return err
+	default:
+		return fmt.Errorf("unsupported workload resource type: %s", input.ResourceType)
+	}
+}
+
+func buildResourceRequirements(input config.ResourceRequirementsInput) (corev1.ResourceRequirements, error) {
+	resources := corev1.ResourceRequirements{}
+
+	requests, err := buildResourceList(input.Requests, "requests")
+	if err != nil {
+		return resources, err
+	}
+	limits, err := buildResourceList(input.Limits, "limits")
+	if err != nil {
+		return resources, err
+	}
+
+	if len(requests) > 0 {
+		resources.Requests = requests
+	}
+	if len(limits) > 0 {
+		resources.Limits = limits
+	}
+	return resources, nil
+}
+
+func buildResourceList(input config.ResourceQuantities, scope string) (corev1.ResourceList, error) {
+	values := corev1.ResourceList{}
+	if input.CPU != "" {
+		quantity, err := resource.ParseQuantity(input.CPU)
+		if err != nil {
+			return values, fmt.Errorf("invalid %s.cpu quantity", scope)
+		}
+		values[corev1.ResourceCPU] = quantity
+	}
+	if input.Memory != "" {
+		quantity, err := resource.ParseQuantity(input.Memory)
+		if err != nil {
+			return values, fmt.Errorf("invalid %s.memory quantity", scope)
+		}
+		values[corev1.ResourceMemory] = quantity
+	}
+	return values, nil
+}
+
+func setContainerResources(containers []corev1.Container, containerName string, resources corev1.ResourceRequirements) error {
+	for i := range containers {
+		if containers[i].Name == containerName {
+			containers[i].Resources = resources
+			return nil
+		}
+	}
+	return fmt.Errorf("container not found")
 }
 
 // ListStatefulSets lists statefulsets in a namespace.

@@ -59,6 +59,24 @@ type ScaleInput struct {
 	Replicas  int32  `json:"replicas"`
 }
 
+type ResourceQuantities struct {
+	CPU    string `json:"cpu,omitempty"`
+	Memory string `json:"memory,omitempty"`
+}
+
+type ResourceRequirementsInput struct {
+	Requests ResourceQuantities `json:"requests,omitempty"`
+	Limits   ResourceQuantities `json:"limits,omitempty"`
+}
+
+type UpdateResourcesInput struct {
+	Namespace     string                    `json:"namespace"`
+	Name          string                    `json:"name"`
+	ResourceType  string                    `json:"resourceType"`
+	ContainerName string                    `json:"containerName"`
+	Resources     ResourceRequirementsInput `json:"resources"`
+}
+
 type ApplyInput struct {
 	Manifest  string `json:"manifest"`
 	YAML      string `json:"yaml"`

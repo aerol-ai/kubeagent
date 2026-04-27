@@ -124,6 +124,12 @@ func (e *Executor) dispatch(ctx context.Context, tool string, input json.RawMess
 			return nil, err
 		}
 		return nil, e.deployments.DeleteDeployment(ctx, in.Namespace, in.Name)
+	case "workloads_update_resources":
+		var in config.UpdateResourcesInput
+		if err := json.Unmarshal(input, &in); err != nil {
+			return nil, err
+		}
+		return nil, e.deployments.UpdateWorkloadResources(ctx, in)
 	case "statefulsets_list":
 		var in config.NamespaceInput
 		if err := json.Unmarshal(input, &in); err != nil {
@@ -298,6 +304,7 @@ func (e *Executor) ListTools() []ToolInfo {
 		{Name: "deployments_scale", Description: "Scale a deployment"},
 		{Name: "deployments_restart", Description: "Restart a deployment"},
 		{Name: "deployments_delete", Description: "Delete a deployment"},
+		{Name: "workloads_update_resources", Description: "Update CPU and memory requests/limits on a workload container"},
 		{Name: "statefulsets_list", Description: "List statefulsets"},
 		{Name: "daemonsets_list", Description: "List daemonsets"},
 		{Name: "services_list", Description: "List services"},
